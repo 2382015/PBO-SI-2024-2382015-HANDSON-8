@@ -1,5 +1,5 @@
 package views;
 
-public class TodoListView {
+public interface TodoListView {
     void run();
 }

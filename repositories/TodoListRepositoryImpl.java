@@ -2,25 +2,27 @@ package repositories;
 
 import entitis.Todolist;
 
-public class TodoListRepositoryImpl implements TodoListRepositoryImpl  {
-    public static Todolist[] todos = new Todolist[][10];
-@Override
-public Todolist[] getALL() {
-    return todos;
-}
+public class TodoListRepositoryImpl implements TodoListRepository {
+    public static Todolist[] todos = new Todolist[10];
 
-@Override
- public void add(final TodoList todoList) {
-    resizeArrayIfFull();
+    @Override
+    public Todolist[] getAll() {
+        return todos;
+    }
 
-    // add todo to array that has null element
-    for (int i = 0; i < todos.length; i++) {
-        if (todos[i] == null) {
-            todos[i] = todoList;
-            break;
+    @Override
+    public void add(Todolist todolist) {
+        resizeArrayIfFull();
+
+        // add todo to array that has null element
+        for (int i = 0; i < todos.length; i++) {
+            if (todos[i] == null) {
+                todos[i] = todolist;
+                break;
+            }
         }
     }
- }
+
     private static void resizeArrayIfFull() {
         // cek whether todos is full
         Boolean isFull = true;
@@ -34,7 +36,7 @@ public Todolist[] getALL() {
 
     private static void resizeArrayToTwoTimesBigger() {
         Todolist[] temp = todos;
-        todos = new Todolist[][todos.length * 2];
+        todos = new Todolist[todos.length * 2];
         for (int i = 0; i < temp.length; i++) {
             todos[i] = temp[i];
         }
@@ -47,9 +49,12 @@ public Todolist[] getALL() {
                 break;
             }
         }
+        return isFull;
     }
-    public Boolean Remove(final Integer number) {
-        if (isSelectedTodoNotValid(number)) {
+
+    @Override
+    public Boolean remove(Integer number) {
+        if(isSelectedTodoNotValid(number)) {
             return false;
         }
 
@@ -84,9 +89,11 @@ public Todolist[] getALL() {
     }
 
     @Override
-    public Boolean edit(final TodoList todoList) {
-     if (isSelectedTodoNotValid(number todolist.getId)) {
-        return false;
-    }
-    todos[number - 1] = newTodo;
+    public Boolean edit(Todolist todolist) {
+        if (isSelectedTodoNotValid(todolist.getId())){
+            return false;
+        }
+        todos[todolist.getId() - 1] = todolist;
         return true;
+    }
+}
