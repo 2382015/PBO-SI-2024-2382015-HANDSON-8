@@ -2,12 +2,14 @@ package repositories;
 
 import config.Database;
 import entitis.Todolist;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
 
 public class TodoListRepositoryDbImpl implements TodoListRepository {
     private final Database database;
@@ -40,17 +42,77 @@ public class TodoListRepositoryDbImpl implements TodoListRepository {
     }
 
     @Override
-    public void add(Todolist todolist) {
+    public void add(final Todolist todolist) {
+        String sqlStatement = "INSERT INTO(todo) values(?)";
+        Connection conn = database.getConnection();
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
+            preparedStatement.setString(1, todolist.getTodo());
 
+            int rowsEffected = preparedStatement.executeUpdate();
+            if (rowsEffected > 0) {
+                System.out.println("Insert successful!");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
-    public Boolean remove(Integer id) {
-        return null;
+    public Boolean remove(final Integer id) {
+        String sqlStatement = "DELETE FROM todo WHERE id = ?";
+        Connection conn = database.getConnection();
+        var dbId = getDbId(id);
+        if (dbId == null) {
+            return false;
+        }
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
+            preparedStatement.setInt(1, dbId);
+
+            int rowsEffected = preparedStatement.executeUpdate();
+            if (rowsEffected > 0) {
+                System.out.println("Delete successful !");
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    private Integer getDbId(final Integer id) {
+        Todolist[] todolists = getAll();
+        Long countElement = Arrays.stream(todolists).filter(Objects::nonNull).count();
+        if (countElement.intValue() == 0) {
+            return null;
+        }
+        var dbId = todolists[id - 1].getId();
+        return dbId;
     }
 
     @Override
-    public Boolean edit(Todolist todolist) {
-        return null;
+    public Boolean edit(final Todolist todolist) {
+        String sqlStatement = "UPDATE todo set todo = ? WHERE id = ?";
+        Connection conn = database.getConnection();
+        var dbId = getDbId(todolist.getId());
+        if (dbId == null) {
+            return false;
+        }
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
+            preparedStatement.setString(1, todolist.getTodo());
+            preparedStatement.setInt(2, dbId);
+
+            int rowsEffected = preparedStatement.executeUpdate();
+            if (rowsEffected > 0) {
+                System.out.println("Update successful !");
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }

@@ -1,7 +1,6 @@
 import config.Database;
 import repositories.TodoListRepository;
 import repositories.TodoListRepositoryDbImpl;
-import repositories.TodoListRepositoryImpl;
 import services.TodoListService;
 import services.TodoListServiceImpl;
 import views.TodoListTerminalView;
